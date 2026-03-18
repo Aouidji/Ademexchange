@@ -111,7 +111,6 @@
     <script>
         let globalPrice = 0;
         const TOKEN = "PUaFV54UcGh59pTjyWbePNtmIGIp5rpFwYa8scHEd0I5PH5PubwUkSBDDUSL";
-        // الرابط الصحيح بناءً على صورة إعداداتك
         const API_BASE = "https://anderson-ecommerce.ecotrack.dz/api/v1";
 
         async function fetchData() {
@@ -159,7 +158,8 @@
             btn.innerText = "جاري الإرسال...";
 
             try {
-                const response = await fetch(`${API_BASE}/orders/create`, {
+                // تم تعديل المسار من /orders/create إلى /orders مباشرة بناءً على نظام EcoTrac
+                const response = await fetch(`${API_BASE}/orders`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -169,7 +169,7 @@
                     body: JSON.stringify({
                         customer_name: fields.name,
                         customer_phone: fields.phone,
-                        address: fields.address,
+                        customer_address: fields.address,
                         total_price: globalPrice,
                         note: `Instagram: ${fields.insta} | Link: ${fields.url}`
                     })
@@ -180,12 +180,15 @@
                     location.reload();
                 } else {
                     const err = await response.json();
-                    alert("خطأ: " + (err.message || "فشل الإرسال"));
+                    // عرض رسالة الخطأ القادمة من السيرفر مباشرة للمساعدة في التشخيص
+                    alert("خطأ من السيرفر: " + (err.message || "المسار غير صحيح"));
                     btn.disabled = false;
+                    btn.innerText = "تأكيد الطلب وإرساله";
                 }
             } catch (e) {
-                alert("تعذر الاتصال بالسيرفر. تأكد من تفعيل HTTPS");
+                alert("تعذر الاتصال بالسيرفر. تأكد من تفعيل HTTPS على موقعك.");
                 btn.disabled = false;
+                btn.innerText = "تأكيد الطلب وإرساله";
             }
         }
     </script>
