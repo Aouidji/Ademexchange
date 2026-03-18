@@ -30,12 +30,20 @@
         </div>
 
         <div class="p-6 md:p-8">
+            <div class="mb-6 flex items-start gap-2 bg-blue-50 p-3 rounded-xl border border-blue-100 text-blue-800 text-xs font-bold shadow-sm">
+                <i class="fas fa-info-circle text-blue-500 text-base"></i>
+                <p>ملاحظة: السعر النهائي قد يختلف حسب خيارات المنتج، يرجى انتظار تأكيدنا للطلب.</p>
+            </div>
+
             <div class="mb-8">
                 <label class="block text-purple-900 font-bold mb-3 mr-2 flex items-center gap-2">
-                    <i class="fas fa-link text-purple-600"></i> ضع رابط منتج (Temu/AliExpress):
+                    <i class="fas fa-shopping-basket text-purple-600"></i> طلب منتج جديد (Temu/AliExpress):
                 </label>
-                <input type="text" id="productUrl" oninput="fetchData()" placeholder="انسخ الرابط هنا..." 
-                class="w-full p-4 bg-purple-50 border-2 border-purple-100 rounded-2xl focus:border-purple-600 focus:bg-white outline-none transition-all text-left dir-ltr shadow-inner">
+                <div class="relative flex items-center">
+                    <input type="text" id="productUrl" oninput="fetchData()" placeholder="انسخ رابط المنتج هنا..." 
+                    class="w-full p-4 bg-purple-50 border-2 border-purple-100 rounded-2xl focus:border-purple-600 focus:bg-white outline-none transition-all text-left dir-ltr shadow-inner pr-12">
+                    <i class="fas fa-cart-plus absolute left-4 text-purple-400 text-xl"></i>
+                </div>
             </div>
 
             <div id="loading" class="hidden flex flex-col items-center py-6">
@@ -50,8 +58,8 @@
                 </div>
 
                 <div class="flex items-start gap-3 bg-amber-50 p-4 rounded-2xl border border-amber-200 mb-8 font-bold text-amber-800 text-sm shadow-sm">
-                    <i class="fas fa-circle-info text-amber-500 text-xl mt-1"></i>
-                    <p>ملاحظة: السعر قد يختلف حسب الخيارات. انتظر اتصالنا لتأكيد السعر النهائي.</p>
+                    <i class="fas fa-truck-ramp-box text-amber-500 text-xl mt-1"></i>
+                    <p>ملاحظة: السعر المعروض أعلاه لا يشمل مصاريف التوصيل.</p>
                 </div>
 
                 <div class="space-y-4">
@@ -86,7 +94,7 @@
 
                     <div class="relative">
                         <i class="fab fa-instagram absolute left-4 top-5 text-pink-600"></i>
-                        <input type="text" id="custInsta" placeholder="اسم حسابك على إنستغرام" class="w-full p-4 bg-white border border-purple-100 rounded-xl outline-none shadow-sm pr-4 border-l-4 border-l-pink-500">
+                        <input type="text" id="custInsta" placeholder="حسابك على إنستغرام" class="w-full p-4 bg-white border border-purple-100 rounded-xl outline-none shadow-sm pr-4 border-l-4 border-l-pink-500">
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-right">
@@ -112,7 +120,6 @@
 
     <script>
         let globalPrice = 0;
-        // التوكن الخاص بحساب أندرسون كما زودتني به
         const ANDERSON_TOKEN = "PUaFV54UcGh59pTjyWbePNtmIGIp5rpFwYa8scHEd0I5PH5PubwUkSBDDUSL";
 
         async function fetchData() {
@@ -168,7 +175,6 @@
             btn.disabled = true;
             btn.innerText = "جاري الإرسال...";
 
-            // تنسيق الرسالة لتطبيق أندرسون
             const message = `
 📦 طلب شراء جديد - Adem Exchange
 ━━━━━━━━━━━━━━
@@ -177,32 +183,27 @@
 📸 إنستغرام: ${insta}
 🚚 النوع: ${deliveryType}
 📍 الموقع: ${state}, ${city}
-💰 السعر: ${globalPrice} د.ج
+💰 السعر: ${globalPrice} د.ج (بدون توصيل)
 🔗 الرابط: ${url}
 ━━━━━━━━━━━━━━
             `;
 
             try {
-                // إرسال البيانات إلى واجهة برمجة تطبيقات أندرسون
                 const response = await fetch('https://api.anderson-app.com/v1/send', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${ANDERSON_TOKEN}`
                     },
-                    body: JSON.stringify({
-                        message: message
-                    })
+                    body: JSON.stringify({ message: message })
                 });
 
                 if (response.ok) {
-                    alert("تم إرسال طلبك بنجاح إلى تطبيق Adem Exchange! سنتواصل معك قريباً.");
+                    alert("تم إرسال طلبك بنجاح! سنتواصل معك قريباً.");
                     location.reload();
-                } else {
-                    throw new Error("فشل الإرسال");
-                }
+                } else { throw new Error(); }
             } catch (e) {
-                alert("حدث خطأ في الاتصال بالتطبيق، يرجى المحاولة لاحقاً.");
+                alert("حدث خطأ، حاول مجدداً.");
                 btn.disabled = false;
                 btn.innerText = "تأكيد الطلب وإرساله";
             }
