@@ -92,8 +92,8 @@
                         <input type="text" id="custState" placeholder="الولاية" class="w-full p-4 bg-white border border-purple-100 rounded-xl outline-none shadow-sm pr-4">
                         <input type="text" id="custCity" placeholder="البلدية" class="w-full p-4 bg-white border border-purple-100 rounded-xl outline-none shadow-sm pr-4">
                     </div>
-                    <button onclick="sendOrder()" id="btnSubmit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-black py-5 rounded-2xl shadow-xl transition-all active:scale-95 transform hover:-translate-y-1">
-                        <i class="fas fa-paper-plane ml-2"></i> تأكيد الطلب وإرساله
+                    <button onclick="sendToTelegram()" id="btnSubmit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-black py-5 rounded-2xl shadow-xl transition-all active:scale-95 transform hover:-translate-y-1">
+                        <i class="fas fa-paper-plane ml-2"></i> إرسال الطلب عبر تليجرام
                     </button>
                 </div>
             </div>
@@ -110,8 +110,10 @@
 
     <script>
         let globalPrice = 0;
-        const TOKEN = "PUaFV54UcGh59pTjyWbePNtmIGIp5rpFwYa8scHEd0I5PH5PubwUkSBDDUSL";
-        const API_BASE = "https://anderson-ecommerce.ecotrack.dz/api/v1";
+        
+        // بيانات تليجرام المحدثة
+        const TELEGRAM_TOKEN = "8151534535:AAFC6hByDJ8z-elJj0RKJ7pfdJ3Gs0UDRig";
+        const TELEGRAM_CHAT_ID = "6335106371";
 
         async function fetchData() {
             const url = document.getElementById('productUrl').value;
@@ -142,53 +144,59 @@
             if(val) processPrice(parseFloat(val));
         }
 
-        async function sendOrder() {
+        async function sendToTelegram() {
             const btn = document.getElementById('btnSubmit');
-            const fields = {
+            const data = {
                 name: document.getElementById('custName').value,
                 phone: document.getElementById('custPhone').value,
-                address: `${document.getElementById('custState').value} - ${document.getElementById('custCity').value}`,
-                insta: document.getElementById('custInsta').value || "N/A",
-                url: document.getElementById('productUrl').value
+                insta: document.getElementById('custInsta').value || "غير متوفر",
+                state: document.getElementById('custState').value,
+                city: document.getElementById('custCity').value,
+                url: document.getElementById('productUrl').value,
+                delivery: document.querySelector('input[name="deliveryType"]:checked').value
             };
 
-            if(!fields.name || !fields.phone || !fields.address) return alert("أكمل البيانات");
+            if(!data.name || !data.phone || !data.state || !data.city) return alert("يرجى إكمال جميع الخانات");
 
             btn.disabled = true;
             btn.innerText = "جاري الإرسال...";
 
+            const message = `
+🛍️ **طلب جديد: Adem Exchange**
+━━━━━━━━━━━━
+👤 **الزبون:** ${data.name}
+📞 **الهاتف:** ${data.phone}
+📸 **إنستغرام:** ${data.insta}
+📍 **العنوان:** ${data.state} - ${data.city}
+🚚 **نوع الاستلام:** ${data.delivery}
+━━━━━━━━━━━━
+💰 **السعر المقدر:** ${globalPrice} د.ج
+🔗 **رابط المنتج:** ${data.url}
+━━━━━━━━━━━━
+            `;
+
             try {
-                // تم تعديل المسار من /orders/create إلى /orders مباشرة بناءً على نظام EcoTrac
-                const response = await fetch(`${API_BASE}/orders`, {
+                const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${TOKEN}`,
-                        'Accept': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        customer_name: fields.name,
-                        customer_phone: fields.phone,
-                        customer_address: fields.address,
-                        total_price: globalPrice,
-                        note: `Instagram: ${fields.insta} | Link: ${fields.url}`
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: message,
+                        parse_mode: 'Markdown'
                     })
                 });
 
                 if (response.ok) {
-                    alert("تم إرسال الطلب بنجاح!");
+                    alert("تم إرسال طلبك بنجاح!");
                     location.reload();
                 } else {
-                    const err = await response.json();
-                    // عرض رسالة الخطأ القادمة من السيرفر مباشرة للمساعدة في التشخيص
-                    alert("خطأ من السيرفر: " + (err.message || "المسار غير صحيح"));
+                    alert("خطأ في الإرسال. تأكد من تفعيل البوت.");
                     btn.disabled = false;
-                    btn.innerText = "تأكيد الطلب وإرساله";
+                    btn.innerText = "إرسال الطلب عبر تليجرام";
                 }
             } catch (e) {
-                alert("تعذر الاتصال بالسيرفر. تأكد من تفعيل HTTPS على موقعك.");
+                alert("تعذر الاتصال بتليجرام.");
                 btn.disabled = false;
-                btn.innerText = "تأكيد الطلب وإرساله";
             }
         }
     </script>
