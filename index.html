@@ -37,10 +37,10 @@
 
             <div class="mb-8">
                 <label class="block text-purple-900 font-bold mb-3 mr-2 flex items-center gap-2">
-                    <i class="fas fa-shopping-basket text-purple-600"></i> طلب منتج  (Temu/AliExpress):
+                    <i class="fas fa-shopping-basket text-purple-600"></i> طلب منتج من: (Temu/AliExpress):
                 </label>
                 <div class="relative flex items-center">
-                    <input type="text" id="productUrl" oninput="fetchData()" placeholder="انسخ رابط المنتج هنا...       " 
+                    <input type="text" id="productUrl" oninput="fetchData()" placeholder="انسخ رابط المنتج هنا..." 
                     class="w-full p-4 bg-purple-50 border-2 border-purple-100 rounded-2xl focus:border-purple-600 focus:bg-white outline-none transition-all text-left dir-ltr shadow-inner pr-12">
                     <i class="fas fa-cart-plus absolute left-4 text-purple-400 text-xl"></i>
                 </div>
@@ -101,7 +101,7 @@
                         <input type="text" id="custState" placeholder="الولاية" class="w-full p-4 bg-white border border-purple-100 rounded-xl outline-none shadow-sm pr-4">
                         <input type="text" id="custCity" placeholder="البلدية" class="w-full p-4 bg-white border border-purple-100 rounded-xl outline-none shadow-sm pr-4">
                     </div>
-                    <button onclick="sendToAnderson()" id="btnSubmit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-black py-5 rounded-2xl shadow-xl transition-all active:scale-95 transform hover:-translate-y-1">
+                    <button onclick="sendToEcoTrac()" id="btnSubmit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-black py-5 rounded-2xl shadow-xl transition-all active:scale-95 transform hover:-translate-y-1">
                         <i class="fas fa-paper-plane ml-2"></i> تأكيد الطلب وإرساله للتطبيق
                     </button>
                 </div>
@@ -120,7 +120,8 @@
 
     <script>
         let globalPrice = 0;
-        const ANDERSON_TOKEN = "PUaFV54UcGh59pTjyWbePNtmIGIp5rpFwYa8scHEd0I5PH5PubwUkSBDDUSL";
+        // التوكن الخاص بحساب EcoTrac Seller
+        const ECOTRAC_TOKEN = "PUaFV54UcGh59pTjyWbePNtmIGIp5rpFwYa8scHEd0I5PH5PubwUkSBDDUSL";
 
         async function fetchData() {
             const url = document.getElementById('productUrl').value;
@@ -157,7 +158,7 @@
             if(val) processPrice(parseFloat(val));
         }
 
-        async function sendToAnderson() {
+        async function sendToEcoTrac() {
             const btn = document.getElementById('btnSubmit');
             const name = document.getElementById('custName').value;
             const phone = document.getElementById('custPhone').value;
@@ -175,35 +176,33 @@
             btn.disabled = true;
             btn.innerText = "جاري الإرسال...";
 
-            const message = `
-📦 طلب شراء جديد - Adem Exchange
-━━━━━━━━━━━━━━
-👤 العميل: ${name}
-📞 الهاتف: ${phone}
-📸 إنستغرام: ${insta}
-🚚 النوع: ${deliveryType}
-📍 الموقع: ${state}, ${city}
-💰 السعر: ${globalPrice} د.ج (بدون توصيل)
-🔗 الرابط: ${url}
-━━━━━━━━━━━━━━
-            `;
+            const message = `طلب جديد: ${name} | هاتف: ${phone} | منتج: ${url} | السعر: ${globalPrice} دج (بدون توصيل)`;
 
             try {
-                const response = await fetch('https://api.anderson-app.com/v1/send', {
+                // الربط البرمجي مع سيرفر EcoTrac Seller
+                const response = await fetch('https://api.ecotrac.dz/v1/orders/create', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${ANDERSON_TOKEN}`
+                        'Authorization': `Bearer ${ECOTRAC_TOKEN}`
                     },
-                    body: JSON.stringify({ message: message })
+                    body: JSON.stringify({
+                        customer_name: name,
+                        customer_phone: phone,
+                        address: `${state} - ${city}`,
+                        product_url: url,
+                        price: globalPrice,
+                        shipping_type: deliveryType,
+                        note: message
+                    })
                 });
 
                 if (response.ok) {
-                    alert("تم إرسال طلبك بنجاح! سنتواصل معك قريباً.");
+                    alert("تم إرسال طلبك بنجاح إلى تطبيق EcoTrac Seller!");
                     location.reload();
                 } else { throw new Error(); }
             } catch (e) {
-                alert("حدث خطأ، حاول مجدداً.");
+                alert("حدث خطأ في الإرسال، حاول مجدداً.");
                 btn.disabled = false;
                 btn.innerText = "تأكيد الطلب وإرساله";
             }
