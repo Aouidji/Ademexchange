@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adem exchange Shop |  </title>
+    <title>Adem exchange Shop</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -25,8 +25,8 @@
 
     <div class="max-w-2xl w-full glass-effect shadow-2xl rounded-[2.5rem] overflow-hidden border border-white/20">
         <div class="bg-gradient-to-r from-blue-600 to-purple-600 p-8 text-white text-center relative">
-            <h1 class="text-3xl font-black mb-2">تسوق بذكاء من عند adem vx</h1>
-            <p class="opacity-90 font-medium">سرعة،ثقة وعمولة هي الأفضل </p>
+            <h1 class="text-3xl font-black mb-2">تسوق بذكاء من عند adem vx </h1>
+            <p class="opacity-90 font-medium">سرعة،ثقة وعمولة هي الأفضل</p>
         </div>
 
         <div class="p-6 md:p-8">
@@ -49,27 +49,57 @@
                     <p id="dzPrice" class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">0.00 د.ج</p>
                 </div>
 
-                <div class="flex items-start gap-3 bg-amber-50 p-4 rounded-2xl border border-amber-200 mb-8 font-bold text-amber-800 text-sm">
+                <div class="flex items-start gap-3 bg-amber-50 p-4 rounded-2xl border border-amber-200 mb-8 font-bold text-amber-800 text-sm shadow-sm">
                     <i class="fas fa-circle-info text-amber-500 text-xl mt-1"></i>
                     <p>ملاحظة: السعر قد يختلف حسب الخيارات. انتظر اتصالنا لتأكيد السعر النهائي.</p>
                 </div>
 
                 <div class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-right">
-                        <input type="text" id="custName" placeholder="الاسم الكامل" class="w-full p-4 bg-white border border-purple-100 rounded-xl outline-none shadow-sm">
-                        <input type="tel" id="custPhone" placeholder="رقم الهاتف" class="w-full p-4 bg-white border border-purple-100 rounded-xl outline-none shadow-sm">
+                    <div class="mb-4">
+                        <label class="block text-purple-900 font-bold mb-3 text-sm">نوع الاستلام:</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <label class="cursor-pointer group">
+                                <input type="radio" name="deliveryType" value="للبيت" checked class="hidden peer">
+                                <div class="p-4 text-center border-2 border-purple-100 rounded-xl bg-white peer-checked:border-purple-600 peer-checked:bg-purple-50 transition-all font-bold text-gray-600 peer-checked:text-purple-700 shadow-sm">
+                                    <i class="fas fa-house-user mb-1 block text-lg"></i> للمنزل
+                                </div>
+                            </label>
+                            <label class="cursor-pointer group">
+                                <input type="radio" name="deliveryType" value="للمكتب" class="hidden peer">
+                                <div class="p-4 text-center border-2 border-purple-100 rounded-xl bg-white peer-checked:border-purple-600 peer-checked:bg-purple-50 transition-all font-bold text-gray-600 peer-checked:text-purple-700 shadow-sm">
+                                    <i class="fas fa-building mb-1 block text-lg"></i> للمكتب
+                                </div>
+                            </label>
+                        </div>
                     </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-right">
-                        <input type="text" id="custState" placeholder="الولاية" class="w-full p-4 bg-white border border-purple-100 rounded-xl outline-none shadow-sm">
-                        <input type="text" id="custCity" placeholder="البلدية" class="w-full p-4 bg-white border border-purple-100 rounded-xl outline-none shadow-sm">
+                        <div class="relative">
+                            <i class="fas fa-user absolute left-4 top-5 text-gray-400"></i>
+                            <input type="text" id="custName" placeholder="الاسم الكامل" class="w-full p-4 bg-white border border-purple-100 rounded-xl outline-none shadow-sm pr-4">
+                        </div>
+                        <div class="relative">
+                            <i class="fas fa-phone absolute left-4 top-5 text-gray-400"></i>
+                            <input type="tel" id="custPhone" placeholder="رقم الهاتف" class="w-full p-4 bg-white border border-purple-100 rounded-xl outline-none shadow-sm pr-4">
+                        </div>
                     </div>
-                    <button onclick="sendToTelegram()" id="btnSubmit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-black py-5 rounded-2xl shadow-xl transition-all active:scale-95">
+
+                    <div class="relative">
+                        <i class="fab fa-instagram absolute left-4 top-5 text-pink-600"></i>
+                        <input type="text" id="custInsta" placeholder="اسم حسابك على إنستغرام" class="w-full p-4 bg-white border border-purple-100 rounded-xl outline-none shadow-sm pr-4 border-l-4 border-l-pink-500">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-right">
+                        <input type="text" id="custState" placeholder="الولاية" class="w-full p-4 bg-white border border-purple-100 rounded-xl outline-none shadow-sm pr-4">
+                        <input type="text" id="custCity" placeholder="البلدية" class="w-full p-4 bg-white border border-purple-100 rounded-xl outline-none shadow-sm pr-4">
+                    </div>
+                    <button onclick="sendToTelegram()" id="btnSubmit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-black py-5 rounded-2xl shadow-xl transition-all active:scale-95 transform hover:-translate-y-1">
                         <i class="fab fa-telegram-plane ml-2"></i> تأكيد الطلب وإرساله
                     </button>
                 </div>
             </div>
 
-            <div id="errorHelper" class="hidden mt-4 p-5 bg-pink-50 text-pink-700 rounded-2xl border border-pink-100 text-center">
+            <div id="errorHelper" class="hidden mt-4 p-5 bg-pink-50 text-pink-700 rounded-2xl border border-pink-100 text-center shadow-inner">
                 <p class="font-bold mb-2">⚠️ تعذر جلب السعر تلقائياً</p>
                 <p class="text-xs mb-4">أدخل السعر بالدولار ($) يدوياً:</p>
                 <div class="flex gap-2">
@@ -124,19 +154,23 @@
             const btn = document.getElementById('btnSubmit');
             const name = document.getElementById('custName').value;
             const phone = document.getElementById('custPhone').value;
+            const insta = document.getElementById('custInsta').value || "غير محدد";
             const state = document.getElementById('custState').value;
             const city = document.getElementById('custCity').value;
             const url = document.getElementById('productUrl').value;
+            
+            // جلب نوع التوصيل المختار
+            const deliveryType = document.querySelector('input[name="deliveryType"]:checked').value;
 
             if(!name || !phone || !state || !city) {
-                alert("يرجى ملء جميع الخانات");
+                alert("يرجى ملء جميع الخانات الأساسية");
                 return;
             }
 
             btn.disabled = true;
             btn.innerText = "جاري الإرسال...";
 
-            const message = `📦 *طلب شراء جديد* 📦\n\n👤 *الاسم:* ${name}\n📞 *الهاتف:* ${phone}\n📍 *الموقع:* ${state}, ${city}\n💰 *السعر:* ${globalPrice} DZD\n🔗 *الرابط:* ${url}`;
+            const message = `📦 *طلب شراء جديد* 📦\n\n👤 *الاسم:* ${name}\n📞 *الهاتف:* ${phone}\n📸 *إنستغرام:* ${insta}\n🚚 *النوع:* ${deliveryType}\n📍 *الموقع:* ${state}, ${city}\n💰 *السعر:* ${globalPrice} DZD\n🔗 *الرابط:* ${url}`;
 
             const tgUrl = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
 
